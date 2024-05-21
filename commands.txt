@@ -1,0 +1,38 @@
+
+
+
+
+# Create a Service in Kong
+curl -i -X POST --url http://localhost:8001/services/ --data 'name=my-api' --data 'url=http://localhost:3000'
+
+# Create a Route in Kong
+curl -i -X POST --url http://localhost:8001/services/my-api/routes --data 'paths[]=/my-api'
+
+# Add Rate Limiting Plugin in Kong
+curl -i -X POST --url http://localhost:8001/services/my-api/plugins/ --data 'name=rate-limiting' --data 'config.minute=5'
+
+# Test the Route through Kong
+curl http://localhost:8000/my-api/user/<userId>
+
+# Simulate Rapid Requests to Test Rate Limiting using a for loop
+for i in {1..1000}; do curl -s http://localhost:8000/my-api/user/<userId>; done
+
+# Bash Script to Simulate Rapid Requests (Save as test_kong_rate_limiting.sh)
+#!/bin/bash
+USER_ID=<userId>
+for i in {1..1000}; do
+    response=$(curl -s http://localhost:8000/my-api/user/$USER_ID)
+    echo "Response: $response"
+done
+
+# Make the script executable and run it
+chmod +x test_kong_rate_limiting.sh
+./test_kong_rate_limiting.sh
+
+
+
+FOR loop BaT
+@echo off
+for /L %%A in (1,1,1000) do (
+   curl http://localhost:3000/user/<userId>
+)
